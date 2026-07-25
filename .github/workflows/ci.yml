@@ -1,0 +1,20 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Configure
+        run: cmake -S . -B build -DEA_BUILD_TESTS=ON -DEA_BUILD_BENCHMARK=ON
+      - name: Build
+        run: cmake --build build --config Release
+      - name: Test
+        run: ctest --test-dir build -C Release --output-on-failure
